@@ -37,7 +37,7 @@ export default function App() {
     <CurrencyProvider>
       <CartProvider>
         <Router />
-        <Toaster />
+        <Toaster position="top-center" />
       </CartProvider>
     </CurrencyProvider>
   );

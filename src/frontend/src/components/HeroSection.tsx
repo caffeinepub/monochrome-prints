@@ -42,7 +42,7 @@ export default function HeroSection() {
                 letterSpacing: "0.08em",
               }}
             >
-              D97 Dimension
+              Achromis
             </h1>
 
             <p className="text-white/60 text-sm md:text-base max-w-sm mb-10 leading-loose tracking-wide">

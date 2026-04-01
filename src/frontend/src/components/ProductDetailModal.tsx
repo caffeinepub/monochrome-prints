@@ -30,6 +30,12 @@ type PaperOption = (typeof PAPERS)[number];
 
 type RoomScene = "Bedroom" | "Living Room" | "Office";
 
+const SIZE_WIDTHS: Record<SizeLabel, string> = {
+  Small: "11%",
+  Medium: "16%",
+  Large: "22%",
+};
+
 const ROOM_SCENES: {
   label: RoomScene;
   image: string;
@@ -42,7 +48,6 @@ const ROOM_SCENES: {
       top: "12%",
       left: "50%",
       transform: "translateX(-50%)",
-      width: "22%",
     },
   },
   {
@@ -52,7 +57,6 @@ const ROOM_SCENES: {
       top: "10%",
       left: "50%",
       transform: "translateX(-50%)",
-      width: "22%",
     },
   },
   {
@@ -62,12 +66,11 @@ const ROOM_SCENES: {
       top: "10%",
       left: "50%",
       transform: "translateX(-50%)",
-      width: "22%",
     },
   },
 ];
 
-const FRAME_SWATCHES: Record<FrameOption, React.ReactNode> = {
+const _FRAME_SWATCHES: Record<FrameOption, React.ReactNode> = {
   None: null,
   Black: <span className="inline-block w-3 h-3 bg-[#1a1a1a] shrink-0" />,
   White: (
@@ -94,11 +97,6 @@ function drawFrame(
   W: number,
   H: number,
 ) {
-  // Trapezoid faces: each face is a quadrilateral
-  // Corners: outer TL(0,0) TR(W,0) BR(W,H) BL(0,H)
-  //          inner TL(fw,fw) TR(W-fw,fw) BR(W-fw,H-fw) BL(fw,H-fw)
-
-  // ---- gradient stops per material ----
   type FaceStops = {
     top: [string, string];
     bottom: [string, string];
@@ -129,7 +127,6 @@ function drawFrame(
 
   const m = mats[frame];
 
-  // Helper: fill trapezoid face with a linear gradient
   function drawFace(
     pts: [number, number][],
     gradX1: number,
@@ -150,7 +147,6 @@ function drawFrame(
     ctx.fill();
   }
 
-  // TOP face
   drawFace(
     [
       [0, 0],
@@ -165,8 +161,6 @@ function drawFrame(
     m.top[0],
     m.top[1],
   );
-
-  // BOTTOM face
   drawFace(
     [
       [0, H],
@@ -181,8 +175,6 @@ function drawFrame(
     m.bottom[0],
     m.bottom[1],
   );
-
-  // LEFT face
   drawFace(
     [
       [0, 0],
@@ -197,8 +189,6 @@ function drawFrame(
     m.left[0],
     m.left[1],
   );
-
-  // RIGHT face
   drawFace(
     [
       [W, 0],
@@ -214,7 +204,6 @@ function drawFrame(
     m.right[1],
   );
 
-  // Specular highlight line (top + left inner edge)
   if (frame === "Black") {
     ctx.save();
     ctx.strokeStyle = "rgba(255,255,255,0.12)";
@@ -231,7 +220,6 @@ function drawFrame(
   }
 
   if (frame === "White") {
-    // Warm highlight along top outer edge
     ctx.save();
     ctx.strokeStyle = "rgba(255,255,240,0.5)";
     ctx.lineWidth = 1.5;
@@ -243,18 +231,15 @@ function drawFrame(
   }
 
   if (frame === "Wood") {
-    // ---- Light Oak grain: dense, tight horizontal lines across all four faces ----
     ctx.save();
 
-    // Helper to draw grain lines clipped to a trapezoid face path
     function drawGrainOnFace(
       pts: [number, number][],
-      // bounding rect of the face for generating lines
       faceX: number,
       faceY: number,
       faceW: number,
       faceH: number,
-      horizontal: boolean, // true = lines run along width, false = along height
+      horizontal: boolean,
     ) {
       ctx.save();
       ctx.beginPath();
@@ -263,14 +248,12 @@ function drawFrame(
       ctx.closePath();
       ctx.clip();
 
-      const step = 2.5; // line spacing in pixels
+      const step = 2.5;
       const count = Math.ceil((horizontal ? faceH : faceW) / step) + 2;
 
       for (let i = 0; i < count; i++) {
-        // Vary opacity and width for natural look
         const opacity = 0.08 + Math.random() * 0.22;
         const lw = 0.4 + Math.random() * 0.7;
-        // Occasional darker "ring" line
         const isRing = i % Math.floor(7 + Math.random() * 8) === 0;
         const ringOpacity = isRing ? opacity * 1.6 : opacity;
         const color =
@@ -283,9 +266,8 @@ function drawFrame(
         ctx.strokeStyle = color;
 
         if (horizontal) {
-          // Lines run horizontally (for top/bottom faces)
           const y = faceY + i * step;
-          const wave = Math.random() * 2 - 1; // slight vertical waviness
+          const wave = Math.random() * 2 - 1;
           ctx.moveTo(faceX, y);
           ctx.quadraticCurveTo(
             faceX + faceW * 0.5,
@@ -294,7 +276,6 @@ function drawFrame(
             y + (Math.random() * 1.5 - 0.75),
           );
         } else {
-          // Lines run vertically (for left/right faces)
           const x = faceX + i * step;
           const wave = Math.random() * 2 - 1;
           ctx.moveTo(x, faceY);
@@ -310,7 +291,6 @@ function drawFrame(
       ctx.restore();
     }
 
-    // TOP face grain (horizontal lines)
     drawGrainOnFace(
       [
         [0, 0],
@@ -324,8 +304,6 @@ function drawFrame(
       fw,
       true,
     );
-
-    // BOTTOM face grain (horizontal lines)
     drawGrainOnFace(
       [
         [0, H],
@@ -339,8 +317,6 @@ function drawFrame(
       fw,
       true,
     );
-
-    // LEFT face grain (vertical lines)
     drawGrainOnFace(
       [
         [0, 0],
@@ -354,8 +330,6 @@ function drawFrame(
       H,
       false,
     );
-
-    // RIGHT face grain (vertical lines)
     drawGrainOnFace(
       [
         [W, 0],
@@ -370,7 +344,6 @@ function drawFrame(
       false,
     );
 
-    // Subtle sheen highlight on top face outer edge
     ctx.strokeStyle = "rgba(255,240,200,0.25)";
     ctx.lineWidth = 1.2;
     ctx.beginPath();
@@ -388,7 +361,7 @@ function CanvasFramedPrint({
   canvasWidth = 600,
 }: CanvasFramedPrintProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [aspectRatio, setAspectRatio] = useState(1.25); // default 4:5 portrait
+  const [aspectRatio, setAspectRatio] = useState(1.25);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -410,15 +383,13 @@ function CanvasFramedPrint({
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
 
-      // Clear
       ctx.clearRect(0, 0, W, H);
 
       const hasFrame = frame !== "None";
-      const fw = hasFrame ? Math.round(W * 0.07) : 0; // frame thickness ~7% of width
-      const matPad = Math.round(W * 0.045); // mat padding ~4.5%
+      const fw = hasFrame ? Math.round(W * 0.07) : 0;
+      const matPad = Math.round(W * 0.045);
       const filletW = hasFrame ? 2 : 0;
 
-      // --- Drop shadow ---
       ctx.save();
       ctx.shadowColor = "rgba(0,0,0,0.55)";
       ctx.shadowBlur = hasFrame ? 28 : 18;
@@ -428,25 +399,21 @@ function CanvasFramedPrint({
       ctx.fillRect(fw, fw, W - fw * 2, H - fw * 2);
       ctx.restore();
 
-      // --- Mat (cream) ---
       ctx.fillStyle = "#f2ede6";
       ctx.fillRect(fw, fw, W - fw * 2, H - fw * 2);
 
-      // --- Photo ---
       const photoX = fw + matPad;
       const photoY = fw + matPad;
       const photoW = W - fw * 2 - matPad * 2;
       const photoH = H - fw * 2 - matPad * 2;
       ctx.drawImage(img, photoX, photoY, photoW, photoH);
 
-      // --- Inner fillet line ---
       if (hasFrame && filletW > 0) {
         ctx.strokeStyle = "#2a2018";
         ctx.lineWidth = filletW;
         ctx.strokeRect(fw + 0.5, fw + 0.5, W - fw * 2 - 1, H - fw * 2 - 1);
       }
 
-      // --- Frame molding ---
       if (hasFrame) {
         drawFrame(ctx, frame as Exclude<FrameOption, "None">, fw, W, H);
       }
@@ -455,7 +422,6 @@ function CanvasFramedPrint({
     };
 
     img.onerror = () => {
-      // Fallback: draw grey placeholder with text
       const W = canvasWidth;
       const H = Math.round(W * aspectRatio);
       canvas.width = W;
@@ -477,13 +443,7 @@ function CanvasFramedPrint({
   const canvasHeight = Math.round(canvasWidth * aspectRatio);
 
   return (
-    <div
-      style={{
-        position: "relative",
-        width: "100%",
-        lineHeight: 0,
-      }}
-    >
+    <div style={{ position: "relative", width: "100%", lineHeight: 0 }}>
       {!loaded && (
         <div
           style={{
@@ -513,12 +473,14 @@ function CanvasFramedPrint({
 
 interface RoomMockupProps {
   printImageUrl: string;
+  frame: FrameOption;
+  size: SizeLabel;
 }
 
-function RoomMockup({ printImageUrl }: RoomMockupProps) {
+function RoomMockup({ printImageUrl, frame, size }: RoomMockupProps) {
   const [activeRoom, setActiveRoom] = useState<RoomScene>("Bedroom");
-  const [mockupFrame, setMockupFrame] = useState<FrameOption>("None");
   const scene = ROOM_SCENES.find((r) => r.label === activeRoom)!;
+  const printWidth = SIZE_WIDTHS[size];
 
   return (
     <div className="mt-6">
@@ -544,28 +506,6 @@ function RoomMockup({ printImageUrl }: RoomMockupProps) {
         ))}
       </div>
 
-      {/* Frame selector */}
-      <div className="flex items-center gap-2 mb-3">
-        <span className="text-[10px] tracking-wider uppercase text-muted-foreground mr-1">
-          Frame
-        </span>
-        {FRAMES.map((f) => (
-          <button
-            key={f}
-            type="button"
-            onClick={() => setMockupFrame(f)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-[10px] tracking-wider uppercase border transition-colors ${
-              mockupFrame === f
-                ? "bg-foreground text-background border-foreground"
-                : "bg-transparent text-muted-foreground border-border hover:border-foreground hover:text-foreground"
-            }`}
-          >
-            {FRAME_SWATCHES[f]}
-            {f}
-          </button>
-        ))}
-      </div>
-
       {/* Room scene */}
       <div
         className="relative w-full overflow-hidden"
@@ -576,10 +516,13 @@ function RoomMockup({ printImageUrl }: RoomMockupProps) {
           alt={`Print displayed in a ${activeRoom}`}
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute" style={scene.printStyle}>
+        <div
+          className="absolute"
+          style={{ ...scene.printStyle, width: printWidth }}
+        >
           <CanvasFramedPrint
             printImageUrl={printImageUrl}
-            frame={mockupFrame}
+            frame={frame}
             canvasWidth={320}
           />
         </div>
@@ -596,7 +539,7 @@ export default function ProductDetailModal({
   onClose,
 }: ProductDetailModalProps) {
   const { addItem } = useCart();
-  const { formatPrice, currency } = useCurrency();
+  const { formatPrice } = useCurrency();
   const [selectedSize, setSelectedSize] = useState<SizeLabel>("Medium");
   const [selectedFrame, setSelectedFrame] = useState<FrameOption>("None");
   const [selectedPaper, setSelectedPaper] =
@@ -629,6 +572,7 @@ export default function ProductDetailModal({
     };
     addItem(print, syntheticProduct);
     toast.success(`${print.title} added to cart`);
+    onClose();
   };
 
   return (
@@ -674,7 +618,11 @@ export default function ProductDetailModal({
               />
             </div>
             <div className="p-5 border-t border-border bg-card">
-              <RoomMockup printImageUrl={print.image.getDirectURL()} />
+              <RoomMockup
+                printImageUrl={print.image.getDirectURL()}
+                frame={selectedFrame}
+                size={selectedSize}
+              />
             </div>
           </div>
 
@@ -787,17 +735,6 @@ export default function ProductDetailModal({
               <ShoppingBag className="mr-2 h-4 w-4" />
               Add to Cart
             </Button>
-
-            <p className="text-xs text-muted-foreground mt-4 leading-relaxed">
-              Museum-quality prints. Ships in protective packaging within 5–7
-              business days.
-            </p>
-
-            {currency.code !== "INR" && (
-              <p className="text-xs text-muted-foreground mt-3 pl-3 border-l-2 border-border leading-relaxed">
-                Shipping charges will be calculated at checkout.
-              </p>
-            )}
           </div>
         </motion.div>
       </motion.div>

@@ -9,7 +9,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-2">
             <p className="font-display text-base font-bold uppercase tracking-widest text-foreground mb-3">
-              D97 DIMENSION
+              ACHROMIS
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
               Curated greyscale fine art prints for collectors who appreciate

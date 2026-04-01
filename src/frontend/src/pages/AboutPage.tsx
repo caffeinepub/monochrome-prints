@@ -81,8 +81,8 @@ export default function AboutPage() {
                   paper, meant to last generations.
                 </p>
                 <p>
-                  D97 DIMENSION is his print studio — a space where each image
-                  is offered as a deliberate, singular object.
+                  ACHROMIS is his print studio — a space where each image is
+                  offered as a deliberate, singular object.
                 </p>
               </div>
 

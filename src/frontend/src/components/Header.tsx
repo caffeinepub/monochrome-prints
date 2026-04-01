@@ -28,7 +28,7 @@ export default function Header({ onCartClick }: HeaderProps) {
           href="/"
           className="font-display text-base font-bold tracking-widest uppercase text-foreground"
         >
-          D97 DIMENSION
+          ACHROMIS
         </a>
 
         {/* Nav */}
