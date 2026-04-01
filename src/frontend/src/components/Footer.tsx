@@ -8,8 +8,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
           <div className="md:col-span-2">
-            <p className="font-display text-base font-bold uppercase tracking-widest text-foreground mb-3">
-              ACHROMIS
+            <p className="font-display text-xl font-light tracking-wider text-foreground mb-3">
+              Achromis
             </p>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
               Curated greyscale fine art prints for collectors who appreciate

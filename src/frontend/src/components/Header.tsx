@@ -26,9 +26,9 @@ export default function Header({ onCartClick }: HeaderProps) {
         {/* Logo */}
         <a
           href="/"
-          className="font-display text-base font-bold tracking-widest uppercase text-foreground"
+          className="font-display text-2xl font-light tracking-wider text-foreground"
         >
-          ACHROMIS
+          Achromis
         </a>
 
         {/* Nav */}

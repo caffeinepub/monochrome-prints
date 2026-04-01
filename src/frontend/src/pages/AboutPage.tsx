@@ -81,7 +81,7 @@ export default function AboutPage() {
                   paper, meant to last generations.
                 </p>
                 <p>
-                  ACHROMIS is his print studio — a space where each image is
+                  Achromis is his print studio — a space where each image is
                   offered as a deliberate, singular object.
                 </p>
               </div>

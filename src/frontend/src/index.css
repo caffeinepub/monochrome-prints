@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -61,13 +61,13 @@
   h4,
   h5,
   h6 {
-    font-family: "Playfair Display", Georgia, serif;
+    font-family: "Cormorant Garamond", Georgia, serif;
   }
 }
 
 @layer utilities {
   .font-display {
-    font-family: "Playfair Display", Georgia, serif;
+    font-family: "Cormorant Garamond", Georgia, serif;
   }
 
   .font-body {

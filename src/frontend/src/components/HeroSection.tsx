@@ -36,7 +36,7 @@ export default function HeroSection() {
             </p>
 
             <h1
-              className="font-display font-bold uppercase leading-none text-white mb-8"
+              className="font-display font-light leading-none text-white mb-8"
               style={{
                 fontSize: "clamp(3.5rem, 10vw, 9rem)",
                 letterSpacing: "0.08em",
