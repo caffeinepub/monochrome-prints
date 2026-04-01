@@ -21,7 +21,7 @@ export default function HeroSection() {
       className="relative min-h-screen flex items-center overflow-hidden"
     >
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/60" style={{ zIndex: 0 }} />
+      <div className="absolute inset-0 bg-black/65" style={{ zIndex: 0 }} />
 
       {/* Content */}
       <div className="relative w-full" style={{ zIndex: 1 }}>
@@ -36,10 +36,10 @@ export default function HeroSection() {
             </p>
 
             <h1
-              className="font-display font-light leading-none text-white mb-8"
+              className="font-display font-bold leading-none text-white mb-8"
               style={{
-                fontSize: "clamp(3.5rem, 10vw, 9rem)",
-                letterSpacing: "0.08em",
+                fontSize: "clamp(4rem, 11vw, 10rem)",
+                letterSpacing: "0.04em",
               }}
             >
               Achromis
