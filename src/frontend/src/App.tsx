@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { CartProvider } from "./context/CartContext";
 import { CurrencyProvider } from "./context/CurrencyContext";
 import AboutPage from "./pages/AboutPage";
+import AccountPage from "./pages/AccountPage";
 import AdminPage from "./pages/AdminPage";
 import CollectionsPage from "./pages/CollectionsPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
@@ -23,6 +24,10 @@ function Router() {
 
   if (path === "/about") {
     return <AboutPage />;
+  }
+
+  if (path === "/account") {
+    return <AccountPage />;
   }
 
   if (sessionId) {

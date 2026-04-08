@@ -14,9 +14,6 @@ export class ExternalBlob {
     static fromBytes(blob: Uint8Array<ArrayBuffer>): ExternalBlob;
     withUploadProgress(onProgress: (percentage: number) => void): ExternalBlob;
 }
-export interface UserProfile {
-    name: string;
-}
 export interface TransformationOutput {
     status: bigint;
     body: Uint8Array;
@@ -82,6 +79,9 @@ export interface Product {
     productLabel: string;
     price: bigint;
     printSize: PrintSize;
+}
+export interface UserProfile {
+    name: string;
 }
 export enum PrintFinish {
     matte = "matte",

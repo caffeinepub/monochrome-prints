@@ -29,13 +29,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { useActor, useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { ChevronLeft, Edit2, Loader2, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { ExternalBlob, type PrintFinish, UserRole } from "../backend";
+import {
+  ExternalBlob,
+  type PrintFinish,
+  UserRole,
+  createActor,
+} from "../backend";
 import type { Print, Product } from "../backend";
-import { useActor } from "../hooks/useActor";
-import { useInternetIdentity } from "../hooks/useInternetIdentity";
 import {
   useAddProduct,
   useAllPrints,
@@ -52,7 +56,7 @@ type AdminSection = "prints" | "products" | "stripe";
 
 export default function AdminPage() {
   const { login, loginStatus, identity } = useInternetIdentity();
-  const { actor } = useActor();
+  const { actor } = useActor(createActor);
   const { data: isAdmin, isLoading: adminLoading } = useIsAdmin();
   const [section, setSection] = useState<AdminSection>("prints");
   const [claimingAdmin, setClaimingAdmin] = useState(false);

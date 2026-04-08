@@ -1,3 +1,4 @@
+import { useActor, useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
   Print,
@@ -6,12 +7,10 @@ import type {
   ShoppingItem,
   StripeConfiguration,
 } from "../backend";
-import { PrintFinish, UserRole } from "../backend";
-import { useActor } from "./useActor";
-import { useInternetIdentity } from "./useInternetIdentity";
+import { PrintFinish, UserRole, createActor } from "../backend";
 
 export function useActivePrints() {
-  const { actor, isFetching } = useActor();
+  const { actor, isFetching } = useActor(createActor);
   return useQuery<Print[]>({
     queryKey: ["activePrints"],
     queryFn: async () => {
@@ -23,7 +22,7 @@ export function useActivePrints() {
 }
 
 export function useAllPrints() {
-  const { actor, isFetching } = useActor();
+  const { actor, isFetching } = useActor(createActor);
   return useQuery<Print[]>({
     queryKey: ["allPrints"],
     queryFn: async () => {
@@ -35,7 +34,7 @@ export function useAllPrints() {
 }
 
 export function useAllProducts() {
-  const { actor, isFetching } = useActor();
+  const { actor, isFetching } = useActor(createActor);
   return useQuery<Product[]>({
     queryKey: ["allProducts"],
     queryFn: async () => {
@@ -47,7 +46,7 @@ export function useAllProducts() {
 }
 
 export function useIsAdmin() {
-  const { actor, isFetching } = useActor();
+  const { actor, isFetching } = useActor(createActor);
   return useQuery<boolean>({
     queryKey: ["isAdmin"],
     queryFn: async () => {
@@ -59,7 +58,7 @@ export function useIsAdmin() {
 }
 
 export function useStripeSessionStatus(sessionId: string | null) {
-  const { actor, isFetching } = useActor();
+  const { actor, isFetching } = useActor(createActor);
   return useQuery({
     queryKey: ["sessionStatus", sessionId],
     queryFn: async () => {
@@ -71,7 +70,7 @@ export function useStripeSessionStatus(sessionId: string | null) {
 }
 
 export function useCreatePrint() {
-  const { actor } = useActor();
+  const { actor } = useActor(createActor);
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (newPrint: PrintUpdate) => {
@@ -86,7 +85,7 @@ export function useCreatePrint() {
 }
 
 export function useUpdatePrint() {
-  const { actor } = useActor();
+  const { actor } = useActor(createActor);
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({
@@ -104,7 +103,7 @@ export function useUpdatePrint() {
 }
 
 export function useDeletePrint() {
-  const { actor } = useActor();
+  const { actor } = useActor(createActor);
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (printId: bigint) => {
@@ -119,7 +118,7 @@ export function useDeletePrint() {
 }
 
 export function useAddProduct() {
-  const { actor } = useActor();
+  const { actor } = useActor(createActor);
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (product: Product) => {
@@ -133,7 +132,7 @@ export function useAddProduct() {
 }
 
 export function useUpdateProduct() {
-  const { actor } = useActor();
+  const { actor } = useActor(createActor);
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (product: Product) => {
@@ -147,7 +146,7 @@ export function useUpdateProduct() {
 }
 
 export function useDeleteProduct() {
-  const { actor } = useActor();
+  const { actor } = useActor(createActor);
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (productId: string) => {
@@ -161,7 +160,7 @@ export function useDeleteProduct() {
 }
 
 export function useSetStripeConfig() {
-  const { actor } = useActor();
+  const { actor } = useActor(createActor);
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (config: StripeConfiguration) => {
@@ -175,7 +174,7 @@ export function useSetStripeConfig() {
 }
 
 export function useCreateCheckoutSession() {
-  const { actor } = useActor();
+  const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async ({
       items,
@@ -193,7 +192,7 @@ export function useCreateCheckoutSession() {
 }
 
 export function useClaimAdmin() {
-  const { actor } = useActor();
+  const { actor } = useActor(createActor);
   const { identity } = useInternetIdentity();
   const qc = useQueryClient();
   return useMutation({

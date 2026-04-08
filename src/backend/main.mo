@@ -5,17 +5,17 @@ import Runtime "mo:core/Runtime";
 import Array "mo:core/Array";
 import Order "mo:core/Order";
 import Principal "mo:core/Principal";
-import AccessControl "authorization/access-control";
-import MixinAuthorization "authorization/MixinAuthorization";
-import MixinStorage "blob-storage/Mixin";
-import Stripe "stripe/stripe";
-import OutCall "http-outcalls/outcall";
-import Storage "blob-storage/Storage";
+import AccessControl "mo:caffeineai-authorization/access-control";
+import MixinAuthorization "mo:caffeineai-authorization/MixinAuthorization";
+import MixinObjectStorage "mo:caffeineai-object-storage/Mixin";
+import Stripe "mo:caffeineai-stripe/stripe";
+import OutCall "mo:caffeineai-http-outcalls/outcall";
+import Storage "mo:caffeineai-object-storage/Storage";
 
 actor {
     let accessControlState = AccessControl.initState();
     include MixinAuthorization(accessControlState);
-    include MixinStorage();
+    include MixinObjectStorage();
 
     // Core data types
     public type UserProfile = {
