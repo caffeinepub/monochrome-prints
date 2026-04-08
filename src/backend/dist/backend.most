@@ -42,6 +42,13 @@ actor {
       var adminAssigned : Bool;
       userRoles : Map__605269027<Principal, UserRole__1054455867>
     };
+  stable authCredentials :
+    {var root : Node__46230540<Text, Text>; var size : Nat__490723111};
+  stable authProfiles :
+    {var root : Node__46230540<Text, Text>; var size : Nat__490723111};
+  stable authSessions :
+    {var root : Node__46230540<Text, Text>; var size : Nat__490723111};
+  stable var authTokenCounter : Nat;
   stable var nextPrintId : Nat;
   stable prints :
     {

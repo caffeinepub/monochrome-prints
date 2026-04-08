@@ -10,6 +10,8 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export type AuthResult = { 'ok' : string } |
+  { 'err' : string };
 export type ExternalBlob = Uint8Array;
 export interface Print {
   'id' : PrintId,
@@ -36,6 +38,8 @@ export interface Product {
   'price' : bigint,
   'printSize' : PrintSize,
 }
+export type ProfileResult = { 'ok' : UserInfo } |
+  { 'err' : string };
 export interface ShoppingItem {
   'productName' : string,
   'currency' : string,
@@ -60,6 +64,7 @@ export interface TransformationOutput {
   'body' : Uint8Array,
   'headers' : Array<http_header>,
 }
+export interface UserInfo { 'name' : string, 'email' : string }
 export interface UserProfile { 'name' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
@@ -108,6 +113,7 @@ export interface _SERVICE {
     string
   >,
   'createPrint' : ActorMethod<[PrintUpdate], PrintId>,
+  'deleteMyAccount' : ActorMethod<[string], AuthResult>,
   'deletePrint' : ActorMethod<[PrintId], undefined>,
   'deleteProduct' : ActorMethod<[string], undefined>,
   'getActivePrints' : ActorMethod<[], Array<Print>>,
@@ -115,6 +121,7 @@ export interface _SERVICE {
   'getAllProducts' : ActorMethod<[], Array<Product>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getMyProfile' : ActorMethod<[string], ProfileResult>,
   'getPrint' : ActorMethod<[PrintId], Print>,
   'getProduct' : ActorMethod<[string], Product>,
   'getStripeSessionStatus' : ActorMethod<[string], StripeSessionStatus>,
@@ -122,10 +129,15 @@ export interface _SERVICE {
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'isStripeConfigured' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'saveMyName' : ActorMethod<[string, string], AuthResult>,
   'setStripeConfiguration' : ActorMethod<[StripeConfiguration], undefined>,
+  'signIn' : ActorMethod<[string, string], AuthResult>,
+  'signOut' : ActorMethod<[string], undefined>,
+  'signUp' : ActorMethod<[string, string], AuthResult>,
   'transform' : ActorMethod<[TransformationInput], TransformationOutput>,
   'updatePrint' : ActorMethod<[PrintId, PrintUpdate], undefined>,
   'updateProduct' : ActorMethod<[Product], undefined>,
+  'validateSession' : ActorMethod<[string], AuthResult>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

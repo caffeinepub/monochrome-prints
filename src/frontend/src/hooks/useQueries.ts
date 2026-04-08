@@ -1,5 +1,6 @@
 import { useActor, useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import type {
   Print,
   PrintUpdate,
@@ -8,6 +9,117 @@ import type {
   StripeConfiguration,
 } from "../backend";
 import { PrintFinish, UserRole, createActor } from "../backend";
+import {
+  EMAIL_KEY,
+  SESSION_KEY,
+  hashPassword,
+  useAuthContext,
+} from "../context/AuthContext";
+
+// ---------------------------------------------------------------------------
+// Auth — session validation on mount
+// ---------------------------------------------------------------------------
+
+/**
+ * Call this once at the top of the app tree (inside AuthProvider).
+ * It validates the persisted token on load and clears it if expired.
+ * Never throws — any failure just marks the user as logged out.
+ */
+export function useValidateSession() {
+  const { actor, isFetching } = useActor(createActor);
+  const { token, _clearSession, _setLoading } = useAuthContext();
+
+  useEffect(() => {
+    if (isFetching || !token) {
+      _setLoading(false);
+      return;
+    }
+    if (!actor) return;
+
+    actor
+      .validateSession(token)
+      .then((result) => {
+        try {
+          if (result.__kind__ !== "ok") {
+            _clearSession();
+          }
+        } catch {
+          _clearSession();
+        }
+      })
+      .catch(() => {
+        _clearSession();
+      })
+      .finally(() => {
+        try {
+          _setLoading(false);
+        } catch {
+          // context may have unmounted
+        }
+      });
+  }, [actor, isFetching, token, _clearSession, _setLoading]);
+}
+
+// ---------------------------------------------------------------------------
+// Auth mutations — sign in / sign up / sign out
+// ---------------------------------------------------------------------------
+
+export function useSignUp() {
+  const { actor } = useActor(createActor);
+  const { _setSession } = useAuthContext();
+  return useMutation({
+    mutationFn: async ({
+      email,
+      password,
+    }: { email: string; password: string }) => {
+      if (!actor) throw new Error("Not ready");
+      const hash = await hashPassword(password);
+      const result = await actor.signUp(email.trim().toLowerCase(), hash);
+      if (result.__kind__ === "ok") {
+        _setSession(result.ok, email.trim().toLowerCase());
+        return null;
+      }
+      return result.err;
+    },
+  });
+}
+
+export function useSignIn() {
+  const { actor } = useActor(createActor);
+  const { _setSession } = useAuthContext();
+  return useMutation({
+    mutationFn: async ({
+      email,
+      password,
+    }: { email: string; password: string }) => {
+      if (!actor) throw new Error("Not ready");
+      const hash = await hashPassword(password);
+      const result = await actor.signIn(email.trim().toLowerCase(), hash);
+      if (result.__kind__ === "ok") {
+        _setSession(result.ok, email.trim().toLowerCase());
+        return null;
+      }
+      return result.err;
+    },
+  });
+}
+
+export function useSignOut() {
+  const { actor } = useActor(createActor);
+  const { token, _clearSession } = useAuthContext();
+  return useMutation({
+    mutationFn: async () => {
+      if (actor && token) {
+        await actor.signOut(token).catch(() => {});
+      }
+      _clearSession();
+    },
+  });
+}
+
+// ---------------------------------------------------------------------------
+// READ queries — unauthenticated, use useActor for ICP actor lifecycle
+// ---------------------------------------------------------------------------
 
 export function useActivePrints() {
   const { actor, isFetching } = useActor(createActor);
@@ -68,6 +180,10 @@ export function useStripeSessionStatus(sessionId: string | null) {
     enabled: !!actor && !isFetching && !!sessionId,
   });
 }
+
+// ---------------------------------------------------------------------------
+// Admin mutations — use useActor (Internet Identity caller)
+// ---------------------------------------------------------------------------
 
 export function useCreatePrint() {
   const { actor } = useActor(createActor);
@@ -191,6 +307,7 @@ export function useCreateCheckoutSession() {
   });
 }
 
+// Admin-only: still uses Internet Identity for the caller principal
 export function useClaimAdmin() {
   const { actor } = useActor(createActor);
   const { identity } = useInternetIdentity();
@@ -207,4 +324,4 @@ export function useClaimAdmin() {
   });
 }
 
-export { PrintFinish };
+export { PrintFinish, SESSION_KEY, EMAIL_KEY };

@@ -52,6 +52,7 @@ export const PrintUpdate = IDL.Record({
   'description' : IDL.Text,
   'image' : ExternalBlob,
 });
+export const AuthResult = IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text });
 export const Print = IDL.Record({
   'id' : PrintId,
   'title' : IDL.Text,
@@ -60,6 +61,8 @@ export const Print = IDL.Record({
   'image' : ExternalBlob,
 });
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const UserInfo = IDL.Record({ 'name' : IDL.Text, 'email' : IDL.Text });
+export const ProfileResult = IDL.Variant({ 'ok' : UserInfo, 'err' : IDL.Text });
 export const StripeSessionStatus = IDL.Variant({
   'completed' : IDL.Record({
     'userPrincipal' : IDL.Opt(IDL.Text),
@@ -126,6 +129,7 @@ export const idlService = IDL.Service({
       [],
     ),
   'createPrint' : IDL.Func([PrintUpdate], [PrintId], []),
+  'deleteMyAccount' : IDL.Func([IDL.Text], [AuthResult], []),
   'deletePrint' : IDL.Func([PrintId], [], []),
   'deleteProduct' : IDL.Func([IDL.Text], [], []),
   'getActivePrints' : IDL.Func([], [IDL.Vec(Print)], ['query']),
@@ -133,6 +137,7 @@ export const idlService = IDL.Service({
   'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getMyProfile' : IDL.Func([IDL.Text], [ProfileResult], []),
   'getPrint' : IDL.Func([PrintId], [Print], ['query']),
   'getProduct' : IDL.Func([IDL.Text], [Product], ['query']),
   'getStripeSessionStatus' : IDL.Func([IDL.Text], [StripeSessionStatus], []),
@@ -144,7 +149,11 @@ export const idlService = IDL.Service({
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'isStripeConfigured' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'saveMyName' : IDL.Func([IDL.Text, IDL.Text], [AuthResult], []),
   'setStripeConfiguration' : IDL.Func([StripeConfiguration], [], []),
+  'signIn' : IDL.Func([IDL.Text, IDL.Text], [AuthResult], []),
+  'signOut' : IDL.Func([IDL.Text], [], []),
+  'signUp' : IDL.Func([IDL.Text, IDL.Text], [AuthResult], []),
   'transform' : IDL.Func(
       [TransformationInput],
       [TransformationOutput],
@@ -152,6 +161,7 @@ export const idlService = IDL.Service({
     ),
   'updatePrint' : IDL.Func([PrintId, PrintUpdate], [], []),
   'updateProduct' : IDL.Func([Product], [], []),
+  'validateSession' : IDL.Func([IDL.Text], [AuthResult], []),
 });
 
 export const idlInitArgs = [];
@@ -201,6 +211,7 @@ export const idlFactory = ({ IDL }) => {
     'description' : IDL.Text,
     'image' : ExternalBlob,
   });
+  const AuthResult = IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text });
   const Print = IDL.Record({
     'id' : PrintId,
     'title' : IDL.Text,
@@ -209,6 +220,8 @@ export const idlFactory = ({ IDL }) => {
     'image' : ExternalBlob,
   });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const UserInfo = IDL.Record({ 'name' : IDL.Text, 'email' : IDL.Text });
+  const ProfileResult = IDL.Variant({ 'ok' : UserInfo, 'err' : IDL.Text });
   const StripeSessionStatus = IDL.Variant({
     'completed' : IDL.Record({
       'userPrincipal' : IDL.Opt(IDL.Text),
@@ -272,6 +285,7 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'createPrint' : IDL.Func([PrintUpdate], [PrintId], []),
+    'deleteMyAccount' : IDL.Func([IDL.Text], [AuthResult], []),
     'deletePrint' : IDL.Func([PrintId], [], []),
     'deleteProduct' : IDL.Func([IDL.Text], [], []),
     'getActivePrints' : IDL.Func([], [IDL.Vec(Print)], ['query']),
@@ -279,6 +293,7 @@ export const idlFactory = ({ IDL }) => {
     'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getMyProfile' : IDL.Func([IDL.Text], [ProfileResult], []),
     'getPrint' : IDL.Func([PrintId], [Print], ['query']),
     'getProduct' : IDL.Func([IDL.Text], [Product], ['query']),
     'getStripeSessionStatus' : IDL.Func([IDL.Text], [StripeSessionStatus], []),
@@ -290,7 +305,11 @@ export const idlFactory = ({ IDL }) => {
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'isStripeConfigured' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'saveMyName' : IDL.Func([IDL.Text, IDL.Text], [AuthResult], []),
     'setStripeConfiguration' : IDL.Func([StripeConfiguration], [], []),
+    'signIn' : IDL.Func([IDL.Text, IDL.Text], [AuthResult], []),
+    'signOut' : IDL.Func([IDL.Text], [], []),
+    'signUp' : IDL.Func([IDL.Text, IDL.Text], [AuthResult], []),
     'transform' : IDL.Func(
         [TransformationInput],
         [TransformationOutput],
@@ -298,6 +317,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'updatePrint' : IDL.Func([PrintId, PrintUpdate], [], []),
     'updateProduct' : IDL.Func([Product], [], []),
+    'validateSession' : IDL.Func([IDL.Text], [AuthResult], []),
   });
 };
 

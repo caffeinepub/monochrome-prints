@@ -29,6 +29,11 @@ type UserRole =
    user;
  };
 type UserProfile = record {name: text;};
+type UserInfo = 
+ record {
+   email: text;
+   name: text;
+ };
 type TransformationOutput = 
  record {
    body: blob;
@@ -60,6 +65,11 @@ type ShoppingItem =
    productDescription: text;
    productName: text;
    quantity: nat;
+ };
+type ProfileResult = 
+ variant {
+   err: text;
+   ok: UserInfo;
  };
 type Product = 
  record {
@@ -97,6 +107,11 @@ type Print =
    title: text;
  };
 type ExternalBlob = blob;
+type AuthResult = 
+ variant {
+   err: text;
+   ok: text;
+ };
 service : {
   _immutableObjectStorageBlobsAreLive: (hashes: vec blob) -> (vec bool) query;
   _immutableObjectStorageBlobsToDelete: () -> (vec blob) query;
@@ -113,6 +128,7 @@ service : {
   createCheckoutSession: (items: vec ShoppingItem, successUrl: text,
    cancelUrl: text) -> (text);
   createPrint: (newPrint: PrintUpdate) -> (PrintId);
+  deleteMyAccount: (token: text) -> (AuthResult);
   deletePrint: (printId: PrintId) -> ();
   deleteProduct: (productId: text) -> ();
   getActivePrints: () -> (vec Print) query;
@@ -120,6 +136,7 @@ service : {
   getAllProducts: () -> (vec Product) query;
   getCallerUserProfile: () -> (opt UserProfile) query;
   getCallerUserRole: () -> (UserRole) query;
+  getMyProfile: (token: text) -> (ProfileResult);
   getPrint: (printId: PrintId) -> (Print) query;
   getProduct: (productId: text) -> (Product) query;
   getStripeSessionStatus: (sessionId: text) -> (StripeSessionStatus);
@@ -127,8 +144,13 @@ service : {
   isCallerAdmin: () -> (bool) query;
   isStripeConfigured: () -> (bool) query;
   saveCallerUserProfile: (profile: UserProfile) -> ();
+  saveMyName: (token: text, name: text) -> (AuthResult);
   setStripeConfiguration: (config: StripeConfiguration) -> ();
+  signIn: (email: text, passwordHash: text) -> (AuthResult);
+  signOut: (token: text) -> ();
+  signUp: (email: text, passwordHash: text) -> (AuthResult);
   transform: (input: TransformationInput) -> (TransformationOutput) query;
   updatePrint: (printId: PrintId, updates: PrintUpdate) -> ();
   updateProduct: (product: Product) -> ();
+  validateSession: (token: text) -> (AuthResult);
 }

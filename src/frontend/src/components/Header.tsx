@@ -1,20 +1,16 @@
-import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { Globe, LogOut, ShoppingBag, User } from "lucide-react";
 import { motion } from "motion/react";
 import { useRef, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { CURRENCIES, useCurrency } from "../context/CurrencyContext";
+import { useSignOut } from "../hooks/useQueries";
 
 const NAV_LINKS = [
   { label: "Shop", href: "/#featured-prints" },
   { label: "Collections", href: "/collections" },
   { label: "About", href: "/about" },
 ];
-
-function shortenPrincipal(principal: string): string {
-  if (principal.length <= 12) return principal;
-  return `${principal.slice(0, 6)}…${principal.slice(-3)}`;
-}
 
 interface HeaderProps {
   onCartClick: () => void;
@@ -23,14 +19,22 @@ interface HeaderProps {
 export default function Header({ onCartClick }: HeaderProps) {
   const { totalItems } = useCart();
   const { currency, setCurrencyCode } = useCurrency();
-  const { login, clear, loginStatus, identity } = useInternetIdentity();
+  const { email, isLoggedIn } = useAuth();
+  const signOutMutation = useSignOut();
   const currentPath = window.location.pathname;
 
   const [currencyOpen, setCurrencyOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const userButtonRef = useRef<HTMLButtonElement>(null);
 
-  const isLoggedIn = loginStatus === "success" && !!identity;
+  function handleSignOut() {
+    setUserOpen(false);
+    signOutMutation.mutate(undefined, {
+      onSuccess: () => {
+        window.location.href = "/";
+      },
+    });
+  }
 
   return (
     <header className="sticky top-0 z-40 bg-background border-b border-border">
@@ -151,8 +155,8 @@ export default function Header({ onCartClick }: HeaderProps) {
                 className="flex items-center gap-1.5 text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors"
               >
                 <User className="h-4 w-4" />
-                <span className="hidden sm:inline font-mono text-[10px] normal-case tracking-normal">
-                  {shortenPrincipal(identity.getPrincipal().toText())}
+                <span className="hidden sm:inline text-[10px] normal-case tracking-normal truncate max-w-[120px]">
+                  {email ?? "Account"}
                 </span>
               </button>
 
@@ -180,10 +184,7 @@ export default function Header({ onCartClick }: HeaderProps) {
                     </a>
                     <button
                       type="button"
-                      onClick={() => {
-                        clear();
-                        setUserOpen(false);
-                      }}
+                      onClick={handleSignOut}
                       data-ocid="header.signout.button"
                       className="w-full flex items-center gap-2 px-4 py-3 text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                     >
@@ -195,17 +196,15 @@ export default function Header({ onCartClick }: HeaderProps) {
               )}
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => login()}
-              disabled={loginStatus === "logging-in"}
+            <a
+              href="/login"
               data-ocid="header.signin.button"
               aria-label="Sign in"
-              className="flex items-center gap-1.5 text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+              className="flex items-center gap-1.5 text-xs tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors"
             >
               <User className="h-4 w-4" />
               <span className="hidden sm:inline">Sign In</span>
-            </button>
+            </a>
           )}
 
           {/* Cart */}
