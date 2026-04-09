@@ -1,6 +1,15 @@
-// Version: 1.0.0
+// Version: 3.0.0
 type Data__791452850<K, V> =
   {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type ExtendedProfile__844068477 =
+  {
+    addressLine1 : Text;
+    addressLine2 : Text;
+    city : Text;
+    country : Text;
+    name : Text;
+    phone : Text
+  };
 type ExternalBlob__246066408 = Blob;
 type Internal__8484328<K, V> =
   {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
@@ -36,7 +45,7 @@ type StripeConfiguration__96897619 =
   {allowedCountries : [Text]; secretKey : Text};
 type UserProfile__491224006 = {name : Text};
 type UserRole__1054455867 = {#admin; #guest; #user};
-actor {
+actor ({
   stable accessControlState :
     {
       var adminAssigned : Bool;
@@ -44,8 +53,7 @@ actor {
     };
   stable authCredentials :
     {var root : Node__46230540<Text, Text>; var size : Nat__490723111};
-  stable authProfiles :
-    {var root : Node__46230540<Text, Text>; var size : Nat__490723111};
+  in authProfiles : Map__605269027<Text, Text>;
   stable authSessions :
     {var root : Node__46230540<Text, Text>; var size : Nat__490723111};
   stable var authTokenCounter : Nat;
@@ -66,4 +74,37 @@ actor {
       var root : Node__46230540<Principal, UserProfile__491224006>;
       var size : Nat__490723111
     }
-};
+}, {
+  stable accessControlState :
+    {
+      var adminAssigned : Bool;
+      userRoles : Map__605269027<Principal, UserRole__1054455867>
+    };
+  stable authCredentials :
+    {var root : Node__46230540<Text, Text>; var size : Nat__490723111};
+  stable authProfiles :
+    {
+      var root : Node__46230540<Text, ExtendedProfile__844068477>;
+      var size : Nat__490723111
+    };
+  stable authSessions :
+    {var root : Node__46230540<Text, Text>; var size : Nat__490723111};
+  stable var authTokenCounter : Nat;
+  stable var nextPrintId : Nat;
+  stable prints :
+    {
+      var root : Node__46230540<PrintId__464768393, Print__655719469>;
+      var size : Nat__490723111
+    };
+  stable products :
+    {
+      var root : Node__46230540<Text, Product__853085059>;
+      var size : Nat__490723111
+    };
+  stable var stripeConfig : ?StripeConfiguration__96897619;
+  stable userProfiles :
+    {
+      var root : Node__46230540<Principal, UserProfile__491224006>;
+      var size : Nat__490723111
+    }
+}) ;

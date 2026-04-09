@@ -12,16 +12,19 @@ import Stripe "mo:caffeineai-stripe/stripe";
 import OutCall "mo:caffeineai-http-outcalls/outcall";
 import Storage "mo:caffeineai-object-storage/Storage";
 import AuthMixin "mixins/auth-api";
+import AuthTypes "types/auth";
+import Migration "migration";
 
+(with migration = Migration.run)
 actor {
     let accessControlState = AccessControl.initState();
     include MixinAuthorization(accessControlState);
     include MixinObjectStorage();
 
     // Custom email+password auth state
-    let authCredentials = Map.empty<Text, Text>(); // email -> passwordHash
-    let authSessions = Map.empty<Text, Text>();    // token -> email
-    let authProfiles = Map.empty<Text, Text>();    // email -> name
+    let authCredentials = Map.empty<Text, Text>();                          // email -> passwordHash
+    let authSessions = Map.empty<Text, Text>();                             // token -> email
+    let authProfiles = Map.empty<Text, AuthTypes.ExtendedProfile>();        // email -> full profile
     include AuthMixin(authCredentials, authSessions, authProfiles);
 
     // Core data types

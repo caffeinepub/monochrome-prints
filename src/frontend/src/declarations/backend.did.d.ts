@@ -64,7 +64,15 @@ export interface TransformationOutput {
   'body' : Uint8Array,
   'headers' : Array<http_header>,
 }
-export interface UserInfo { 'name' : string, 'email' : string }
+export interface UserInfo {
+  'country' : string,
+  'city' : string,
+  'name' : string,
+  'email' : string,
+  'addressLine1' : string,
+  'addressLine2' : string,
+  'phone' : string,
+}
 export interface UserProfile { 'name' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
@@ -130,6 +138,10 @@ export interface _SERVICE {
   'isStripeConfigured' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'saveMyName' : ActorMethod<[string, string], AuthResult>,
+  'saveMyProfile' : ActorMethod<
+    [string, string, string, string, string, string, string],
+    AuthResult
+  >,
   'setStripeConfiguration' : ActorMethod<[StripeConfiguration], undefined>,
   'signIn' : ActorMethod<[string, string], AuthResult>,
   'signOut' : ActorMethod<[string], undefined>,

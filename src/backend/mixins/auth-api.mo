@@ -5,7 +5,7 @@ import Types "../types/auth";
 mixin (
     authCredentials : Map.Map<Text, Text>,
     authSessions : Map.Map<Text, Text>,
-    authProfiles : Map.Map<Text, Text>,
+    authProfiles : Map.Map<Text, Types.ExtendedProfile>,
 ) {
     var authTokenCounter : Nat = 0;
 
@@ -36,7 +36,7 @@ mixin (
         AuthLib.signOut(authSessions, token);
     };
 
-    /// Get the profile for the token owner.
+    /// Get the full profile for the token owner.
     public func getMyProfile(token : Text) : async Types.ProfileResult {
         AuthLib.getMyProfile(authSessions, authProfiles, token);
     };
@@ -44,6 +44,19 @@ mixin (
     /// Save or update the display name for the token owner.
     public func saveMyName(token : Text, name : Text) : async Types.AuthResult {
         AuthLib.saveMyName(authSessions, authProfiles, token, name);
+    };
+
+    /// Save or update the full profile (name, phone, address) for the token owner.
+    public func saveMyProfile(
+        token : Text,
+        name : Text,
+        phone : Text,
+        addressLine1 : Text,
+        addressLine2 : Text,
+        city : Text,
+        country : Text,
+    ) : async Types.AuthResult {
+        AuthLib.saveMyProfile(authSessions, authProfiles, token, name, phone, addressLine1, addressLine2, city, country);
     };
 
     /// Permanently delete the account of the token owner.

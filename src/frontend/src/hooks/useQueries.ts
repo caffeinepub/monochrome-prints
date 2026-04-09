@@ -7,6 +7,7 @@ import type {
   Product,
   ShoppingItem,
   StripeConfiguration,
+  UserInfo,
 } from "../backend";
 import { PrintFinish, UserRole, createActor } from "../backend";
 import {
@@ -113,6 +114,64 @@ export function useSignOut() {
         await actor.signOut(token).catch(() => {});
       }
       _clearSession();
+    },
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Profile — authenticated queries and mutations
+// ---------------------------------------------------------------------------
+
+export function useGetMyProfile(token: string | null) {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery<UserInfo | null>({
+    queryKey: ["myProfile", token],
+    queryFn: async () => {
+      if (!actor || !token) return null;
+      const result = await actor.getMyProfile(token);
+      if (result.__kind__ === "ok") return result.ok;
+      return null;
+    },
+    enabled: !!actor && !isFetching && !!token,
+  });
+}
+
+export function useSaveMyProfile() {
+  const { actor } = useActor(createActor);
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      token,
+      name,
+      phone,
+      addressLine1,
+      addressLine2,
+      city,
+      country,
+    }: {
+      token: string;
+      name: string;
+      phone: string;
+      addressLine1: string;
+      addressLine2: string;
+      city: string;
+      country: string;
+    }) => {
+      if (!actor) throw new Error("Not ready");
+      const result = await actor.saveMyProfile(
+        token,
+        name,
+        phone,
+        addressLine1,
+        addressLine2,
+        city,
+        country,
+      );
+      if (result.__kind__ === "err") throw new Error(result.err);
+      return result;
+    },
+    onSuccess: (_data, variables) => {
+      qc.invalidateQueries({ queryKey: ["myProfile", variables.token] });
     },
   });
 }

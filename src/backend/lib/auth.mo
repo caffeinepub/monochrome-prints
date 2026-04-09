@@ -8,8 +8,8 @@ module {
     /// Storage for email -> passwordHash
     public type CredentialStore = Map.Map<Text, Text>;
 
-    /// Storage for email -> name (optional profile name)
-    public type ProfileStore = Map.Map<Text, Text>;
+    /// Storage for email -> ExtendedProfile
+    public type ProfileStore = Map.Map<Text, Types.ExtendedProfile>;
 
     /// Storage for token -> email
     public type SessionStore = Map.Map<Text, Text>;
@@ -101,10 +101,26 @@ module {
     };
 
     // -------------------------
+    // Profile helpers
+    // -------------------------
+
+    /// Build a UserInfo from an email and an optional ExtendedProfile.
+    func buildUserInfo(email : Text, profile : ?Types.ExtendedProfile) : Types.UserInfo {
+        switch (profile) {
+            case null {
+                { email; name = ""; phone = ""; addressLine1 = ""; addressLine2 = ""; city = ""; country = "" };
+            };
+            case (?p) {
+                { email; name = p.name; phone = p.phone; addressLine1 = p.addressLine1; addressLine2 = p.addressLine2; city = p.city; country = p.country };
+            };
+        };
+    };
+
+    // -------------------------
     // Profile
     // -------------------------
 
-    /// Get profile for the owner of the token.
+    /// Get full profile for the owner of the token.
     public func getMyProfile(
         sessions : SessionStore,
         profiles : ProfileStore,
@@ -113,16 +129,13 @@ module {
         switch (sessions.get(token)) {
             case null { #err("Invalid or expired session") };
             case (?email) {
-                let name = switch (profiles.get(email)) {
-                    case null { "" };
-                    case (?n) { n };
-                };
-                #ok({ email; name });
+                #ok(buildUserInfo(email, profiles.get(email)));
             };
         };
     };
 
     /// Save or update display name for the owner of the token.
+    /// Preserves all other existing profile fields.
     public func saveMyName(
         sessions : SessionStore,
         profiles : ProfileStore,
@@ -132,8 +145,33 @@ module {
         switch (sessions.get(token)) {
             case null { #err("Invalid or expired session") };
             case (?email) {
-                profiles.add(email, name);
+                let existing = switch (profiles.get(email)) {
+                    case null { { name = ""; phone = ""; addressLine1 = ""; addressLine2 = ""; city = ""; country = "" } };
+                    case (?p) { p };
+                };
+                profiles.add(email, { existing with name });
                 #ok("Profile updated");
+            };
+        };
+    };
+
+    /// Save or update the full extended profile for the owner of the token.
+    public func saveMyProfile(
+        sessions : SessionStore,
+        profiles : ProfileStore,
+        token : Text,
+        name : Text,
+        phone : Text,
+        addressLine1 : Text,
+        addressLine2 : Text,
+        city : Text,
+        country : Text,
+    ) : Types.AuthResult {
+        switch (sessions.get(token)) {
+            case null { #err("Invalid or expired session") };
+            case (?email) {
+                profiles.add(email, { name; phone; addressLine1; addressLine2; city; country });
+                #ok("Profile saved");
             };
         };
     };

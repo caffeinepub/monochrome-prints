@@ -61,7 +61,15 @@ export const Print = IDL.Record({
   'image' : ExternalBlob,
 });
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
-export const UserInfo = IDL.Record({ 'name' : IDL.Text, 'email' : IDL.Text });
+export const UserInfo = IDL.Record({
+  'country' : IDL.Text,
+  'city' : IDL.Text,
+  'name' : IDL.Text,
+  'email' : IDL.Text,
+  'addressLine1' : IDL.Text,
+  'addressLine2' : IDL.Text,
+  'phone' : IDL.Text,
+});
 export const ProfileResult = IDL.Variant({ 'ok' : UserInfo, 'err' : IDL.Text });
 export const StripeSessionStatus = IDL.Variant({
   'completed' : IDL.Record({
@@ -150,6 +158,11 @@ export const idlService = IDL.Service({
   'isStripeConfigured' : IDL.Func([], [IDL.Bool], ['query']),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'saveMyName' : IDL.Func([IDL.Text, IDL.Text], [AuthResult], []),
+  'saveMyProfile' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [AuthResult],
+      [],
+    ),
   'setStripeConfiguration' : IDL.Func([StripeConfiguration], [], []),
   'signIn' : IDL.Func([IDL.Text, IDL.Text], [AuthResult], []),
   'signOut' : IDL.Func([IDL.Text], [], []),
@@ -220,7 +233,15 @@ export const idlFactory = ({ IDL }) => {
     'image' : ExternalBlob,
   });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
-  const UserInfo = IDL.Record({ 'name' : IDL.Text, 'email' : IDL.Text });
+  const UserInfo = IDL.Record({
+    'country' : IDL.Text,
+    'city' : IDL.Text,
+    'name' : IDL.Text,
+    'email' : IDL.Text,
+    'addressLine1' : IDL.Text,
+    'addressLine2' : IDL.Text,
+    'phone' : IDL.Text,
+  });
   const ProfileResult = IDL.Variant({ 'ok' : UserInfo, 'err' : IDL.Text });
   const StripeSessionStatus = IDL.Variant({
     'completed' : IDL.Record({
@@ -306,6 +327,11 @@ export const idlFactory = ({ IDL }) => {
     'isStripeConfigured' : IDL.Func([], [IDL.Bool], ['query']),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'saveMyName' : IDL.Func([IDL.Text, IDL.Text], [AuthResult], []),
+    'saveMyProfile' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [AuthResult],
+        [],
+      ),
     'setStripeConfiguration' : IDL.Func([StripeConfiguration], [], []),
     'signIn' : IDL.Func([IDL.Text, IDL.Text], [AuthResult], []),
     'signOut' : IDL.Func([IDL.Text], [], []),

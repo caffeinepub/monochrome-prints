@@ -102,8 +102,13 @@ export interface _ImmutableObjectStorageCreateCertificateResult {
     blob_hash: string;
 }
 export interface UserInfo {
+    country: string;
+    city: string;
     name: string;
     email: string;
+    addressLine1: string;
+    addressLine2: string;
+    phone: string;
 }
 export interface http_header {
     value: string;
@@ -226,6 +231,7 @@ export interface backendInterface {
     isStripeConfigured(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     saveMyName(token: string, name: string): Promise<AuthResult>;
+    saveMyProfile(token: string, name: string, phone: string, addressLine1: string, addressLine2: string, city: string, country: string): Promise<AuthResult>;
     setStripeConfiguration(config: StripeConfiguration): Promise<void>;
     signIn(email: string, passwordHash: string): Promise<AuthResult>;
     signOut(token: string): Promise<void>;
@@ -627,6 +633,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.saveMyName(arg0, arg1);
+            return from_candid_AuthResult_n17(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async saveMyProfile(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string, arg5: string, arg6: string): Promise<AuthResult> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.saveMyProfile(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
+                return from_candid_AuthResult_n17(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.saveMyProfile(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
             return from_candid_AuthResult_n17(this._uploadFile, this._downloadFile, result);
         }
     }

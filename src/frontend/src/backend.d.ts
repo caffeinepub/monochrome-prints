@@ -20,8 +20,13 @@ export interface TransformationOutput {
     headers: Array<http_header>;
 }
 export interface UserInfo {
+    country: string;
+    city: string;
     name: string;
     email: string;
+    addressLine1: string;
+    addressLine2: string;
+    phone: string;
 }
 export interface http_header {
     value: string;
@@ -133,6 +138,7 @@ export interface backendInterface {
     isStripeConfigured(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     saveMyName(token: string, name: string): Promise<AuthResult>;
+    saveMyProfile(token: string, name: string, phone: string, addressLine1: string, addressLine2: string, city: string, country: string): Promise<AuthResult>;
     setStripeConfiguration(config: StripeConfiguration): Promise<void>;
     signIn(email: string, passwordHash: string): Promise<AuthResult>;
     signOut(token: string): Promise<void>;

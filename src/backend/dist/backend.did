@@ -31,8 +31,13 @@ type UserRole =
 type UserProfile = record {name: text;};
 type UserInfo = 
  record {
+   addressLine1: text;
+   addressLine2: text;
+   city: text;
+   country: text;
    email: text;
    name: text;
+   phone: text;
  };
 type TransformationOutput = 
  record {
@@ -145,6 +150,8 @@ service : {
   isStripeConfigured: () -> (bool) query;
   saveCallerUserProfile: (profile: UserProfile) -> ();
   saveMyName: (token: text, name: text) -> (AuthResult);
+  saveMyProfile: (token: text, name: text, phone: text, addressLine1: 
+   text, addressLine2: text, city: text, country: text) -> (AuthResult);
   setStripeConfiguration: (config: StripeConfiguration) -> ();
   signIn: (email: text, passwordHash: text) -> (AuthResult);
   signOut: (token: text) -> ();
