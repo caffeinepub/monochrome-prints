@@ -13,7 +13,7 @@ export default function HeroSection() {
     <section
       aria-label="Hero"
       style={{
-        backgroundImage: `url('/assets/uploads/img_2025-10-18_01_00_28-019d3917-9806-753e-998e-a47f0c7c9d12-1.jpg')`,
+        backgroundImage: `url('/assets/img_2025-10-18_01_00_28-019d3917-9806-753e-998e-a47f0c7c9d12.jpg')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

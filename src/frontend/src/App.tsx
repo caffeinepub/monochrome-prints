@@ -1,4 +1,5 @@
 import { Toaster } from "@/components/ui/sonner";
+import { InternetIdentityProvider } from "@caffeineai/core-infrastructure";
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
@@ -152,17 +153,19 @@ function Router() {
 export default function App() {
   return (
     <AppErrorBoundary>
-      <AuthProvider>
-        <SafeSessionValidator />
-        <CurrencyProvider>
-          <CartProvider>
-            <AppErrorBoundary>
-              <Router />
-            </AppErrorBoundary>
-            <Toaster position="top-center" />
-          </CartProvider>
-        </CurrencyProvider>
-      </AuthProvider>
+      <InternetIdentityProvider>
+        <AuthProvider>
+          <SafeSessionValidator />
+          <CurrencyProvider>
+            <CartProvider>
+              <AppErrorBoundary>
+                <Router />
+              </AppErrorBoundary>
+              <Toaster position="top-center" />
+            </CartProvider>
+          </CurrencyProvider>
+        </AuthProvider>
+      </InternetIdentityProvider>
     </AppErrorBoundary>
   );
 }
